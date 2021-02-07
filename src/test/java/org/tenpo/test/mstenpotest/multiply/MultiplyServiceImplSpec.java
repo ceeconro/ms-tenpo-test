@@ -5,15 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.tenpo.test.mstenpotest.exceptions.InvalidInputException;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class MultiplyServiceImplSpec {
@@ -51,5 +55,18 @@ class MultiplyServiceImplSpec {
 
     }
 
+    @Test
+    void getMultiplyHistoryPaged() {
+        Page<MultiplyEntity> multiplyEntityList = getMultiplyEntityList();
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        when(multiplyRepository.findAll(pageRequest))
+                .thenReturn(multiplyEntityList);
 
+        Page<MultiplyResponse> multiplyResponses = multiplyService.getMultiplyHistoryPages(pageRequest);
+        assertEquals(3, multiplyResponses.getSize());
+    }
+
+    private PageImpl getMultiplyEntityList() {
+        return new PageImpl(Arrays.asList(new MultiplyEntity(),new MultiplyEntity(),new MultiplyEntity()));
+    }
 }

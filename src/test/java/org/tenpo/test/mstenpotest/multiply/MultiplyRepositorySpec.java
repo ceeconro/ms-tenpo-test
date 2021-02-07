@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
-import org.tenpo.test.mstenpotest.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
 
@@ -51,5 +53,22 @@ class MultiplyRepositorySpec {
         assertThrows(TransactionSystemException.class, () -> multiplyRepository.save(numberANullEntity));
 
     }
+
+    @Test
+    @DisplayName("Given a pageable, then will response a list page of multiply")
+    void getMultiplyHistory() {
+        prepareMultiplyHistory();
+        Page<MultiplyEntity> multiplyHistory =  multiplyRepository.findAll(PageRequest.of(0, 2));
+        assertEquals(2, multiplyHistory.getSize());
+
+    }
+
+    private void prepareMultiplyHistory() {
+        multiplyRepository.save(new MultiplyEntity(new BigDecimal(2), new BigDecimal(2), new BigDecimal(8) ));
+        multiplyRepository.save(new MultiplyEntity(new BigDecimal(2), new BigDecimal(2), new BigDecimal(8) ));
+        multiplyRepository.save(new MultiplyEntity(new BigDecimal(2), new BigDecimal(2), new BigDecimal(8) ));
+        multiplyRepository.save(new MultiplyEntity(new BigDecimal(2), new BigDecimal(2), new BigDecimal(8) ));
+    }
+
 
 }
