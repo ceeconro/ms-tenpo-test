@@ -1,5 +1,6 @@
 package org.tenpo.test.mstenpotest.http;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,9 +11,9 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.tenpo.test.mstenpotest.exceptions.InvalidInputException;
 import org.tenpo.test.mstenpotest.exceptions.NotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -22,8 +23,14 @@ class GlobalControllerExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public @ResponseBody
     HttpErrorDetails handleNotFoundExceptions(Exception ex, WebRequest request) {
-
         return createHttpErrorInfo(NOT_FOUND, request, ex);
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler({JsonMappingException.class, MethodArgumentNotValidException.class})
+    public @ResponseBody
+    HttpErrorDetails handleBadRequestExceptions(Exception ex, WebRequest request) {
+        return createHttpErrorInfo(BAD_REQUEST, request, ex);
     }
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
