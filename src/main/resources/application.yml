@@ -3,6 +3,19 @@ logging:
     root: DEBUG
     org.tenpo: DEBUG
 
+api:
+  common:
+    version: 1.0.0
+    title: Tenpo test
+    description: API multiply numbers
+    contact:
+      name: Cesar Contreras
+      url: https://github.com/ceeconro
+      email: ceeconro@gmail.com
+  ms-tenpo-test:
+    multiply:
+      description: multiply two numbers and return the result
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/tenpotest
