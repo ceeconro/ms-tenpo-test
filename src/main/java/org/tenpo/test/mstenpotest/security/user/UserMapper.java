@@ -26,6 +26,7 @@ public class UserMapper {
         Role role = new Role();
         role.setName(userRequest.getRole());
         user.setRoles(Set.of(role));
+        user.setLogged(false);
         return user;
     }
 }

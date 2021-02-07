@@ -3,6 +3,7 @@ package org.tenpo.test.mstenpotest.http;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.tenpo.test.mstenpotest.exceptions.InvalidInputException;
-import org.tenpo.test.mstenpotest.exceptions.NotFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.tenpo.test.mstenpotest.security.authentication.AuthenticationException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -19,11 +19,11 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 class GlobalControllerExceptionHandler {
 
-    @ResponseStatus(NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
     public @ResponseBody
     HttpErrorDetails handleNotFoundExceptions(Exception ex, WebRequest request) {
-        return createHttpErrorInfo(NOT_FOUND, request, ex);
+        return createHttpErrorInfo(UNAUTHORIZED, request, ex);
     }
 
     @ResponseStatus(BAD_REQUEST)

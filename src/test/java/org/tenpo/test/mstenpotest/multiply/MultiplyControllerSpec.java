@@ -13,14 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -94,7 +92,7 @@ class MultiplyControllerSpec {
     @DisplayName("Given a request of history data, then will return a pageable data list")
     @WithMockUser(roles = "admin")
     void getMultiplyHistoryListPaginated() throws Exception {
-        when(multiplyService.getMultiplyHistoryPages(PageRequest.of(0,3)))
+        when(multiplyService.getMultiplyHistoryPages(PageRequest.of(0, 3)))
                 .thenReturn(getMultiplyResponseList());
 
         mockMvc.perform(

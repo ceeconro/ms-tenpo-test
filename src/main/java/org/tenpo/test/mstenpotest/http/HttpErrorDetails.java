@@ -18,6 +18,13 @@ public class HttpErrorDetails {
         this.message = message;
     }
 
+    public HttpErrorDetails(HttpStatus httpStatus, String path, String message, ZonedDateTime now) {
+        timestamp = now;
+        this.httpStatus = httpStatus;
+        this.path = path;
+        this.message = message;
+    }
+
     public ZonedDateTime getTimestamp() {
         return timestamp;
     }

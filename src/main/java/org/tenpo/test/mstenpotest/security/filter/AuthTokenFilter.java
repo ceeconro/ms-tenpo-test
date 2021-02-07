@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.tenpo.test.mstenpotest.security.util.JwtTokenUtil;
+import org.tenpo.test.mstenpotest.exceptions.NotLoggedInException;
+import org.tenpo.test.mstenpotest.security.user.User;
 import org.tenpo.test.mstenpotest.security.user.UserService;
+import org.tenpo.test.mstenpotest.security.util.JwtTokenUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -57,13 +58,20 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             logger.info("checking authentication for user " + username);
 
-            UserDetails userDetails = this.userService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            log.info("authenticated user {}, setting security context", username);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User userDetails = this.userService.loadUserByUsername(username);
+            log.info("User logged in {}", userDetails);
+            if (userDetails.isLogged()) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        ((User) userDetails).getAuthorities()
+                );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                log.info("authenticated user {}, setting security context", username);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new NotLoggedInException("User is not logged");
+            }
         }
 
         filterChain.doFilter(request, response);
