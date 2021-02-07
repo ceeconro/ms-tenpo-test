@@ -20,7 +20,6 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 
 @DataJpaTest
 @Transactional(propagation = NOT_SUPPORTED)
-@AutoConfigureTestDatabase
 class MultiplyRepositorySpec {
 
     @Autowired

@@ -1,5 +1,16 @@
 version: '2.1'
 services:
+  ms-tenpo-test:
+#    build: .
+    image: ceeconro/ms-tenpo-test
+    mem_limit: 350m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     image: postgres
     environment:
@@ -10,6 +21,11 @@ services:
       - '5432:5432'
     volumes:
       - database:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U tenpo_user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   database:
