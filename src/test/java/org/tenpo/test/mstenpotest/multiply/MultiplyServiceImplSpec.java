@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.tenpo.test.mstenpotest.KafkaMessageProducer;
 import org.tenpo.test.mstenpotest.exceptions.InvalidInputException;
 
 import java.math.BigDecimal;
@@ -30,21 +31,27 @@ class MultiplyServiceImplSpec {
     @MockBean
     private MultiplyRepository multiplyRepository;
 
+    @MockBean
+    private KafkaMessageProducer kafkaMessageProducer;
+
     @Test
     @DisplayName("Given an multiply request, when aply the operation, then will return the result")
     public void multiplyAndReturnResult() {
+        doNothing().when(kafkaMessageProducer).sendMessage(any());
+
         ResultResponse resultResponse = multiplyService.multiply(new MultiplyRequest(new BigDecimal(2), new BigDecimal(4)));
 
         assertEquals(new ResultResponse(new BigDecimal(8)), resultResponse);
     }
 
     @Test
-    @DisplayName("Given an multiply request, then will send to persist")
+    @DisplayName("Given an multiply request, then will send to kafka")
     public void multiplyAndPersist() {
+        doNothing().when(kafkaMessageProducer).sendMessage(any());
 
         MultiplyRequest multiplyRequest = new MultiplyRequest(new BigDecimal(2), new BigDecimal(4));
-        ResultResponse resultResponse = multiplyService.multiply(multiplyRequest);
-        verify(multiplyRepository, times(1)).save(any());
+        multiplyService.multiply(multiplyRequest);
+        verify(kafkaMessageProducer, times(1)).sendMessage(any());
 
     }
 

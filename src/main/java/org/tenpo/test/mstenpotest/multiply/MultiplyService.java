@@ -7,5 +7,7 @@ public interface MultiplyService {
 
     ResultResponse multiply(MultiplyRequest multiplyRequest);
 
+    void save(MultiplyEntity multiplyEntity);
+
     Page<MultiplyResponse> getMultiplyHistoryPages(Pageable Pageable);
 }
